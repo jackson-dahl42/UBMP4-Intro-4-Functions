@@ -1,6 +1,6 @@
 /*==============================================================================
  Project: Intro-4-Functions
- Date:    April 15, 2021
+ Date:    April 30, 2021
  
  This program demonstrates the use of functions, and variable passing between
  the main and function code.
@@ -25,7 +25,7 @@ const char UP = 1;
 const char DOWN = 2;
 
 // Program variable definitions
-unsigned char tOnLED5 = 127;
+unsigned char TonLED5 = 127;
 unsigned char button;
 
 unsigned char button_pressed(void)
@@ -44,17 +44,17 @@ unsigned char button_pressed(void)
     }
 }
 
-void pwm_LED5(unsigned char tOn)
+void pwm_LED5(unsigned char Ton)
 {
     for(unsigned char t = 255; t != 0; t --)
     {
-        if(tOn == t)
+        if(Ton == t)
         {
             LED5 = 1;
         }
         __delay_us(20);
     }
-    if(tOn < 255)
+    if(Ton < 255)
     {
         LED5 = 0;
     }
@@ -70,17 +70,17 @@ int main(void)
         // Read up/down buttons and adjust LED5 brightness
         button = button_pressed();
         
-        if(button == UP && tOnLED5 < 255)
+        if(button == UP && TonLED5 < 255)
         {
-            tOnLED5 += 1;
+            TonLED5 += 1;
         }
 
-        if(button == DOWN && tOnLED5 > 0)
+        if(button == DOWN && TonLED5 > 0)
         {
-            tOnLED5 -= 1;
+            TonLED5 -= 1;
         }
 
-        pwm_LED5(tOnLED5);
+        pwm_LED5(TonLED5);
         
         // Activate bootloader when SW1 is pressed.
         if(SW1 == 0)
@@ -119,25 +119,29 @@ int main(void)
  *      Try moving the button_pressed() and pwm_LED5() functions to below the
  *      closing brace of the main() function, and build the code. What happens?
  * 
- *      The compiler should have reported an error, because it didn't understand
- *      what the function call was referring to, because it hasn't come across
- *      the function yet. We can eliminate this error by adding a function
- *      prototype above the main code to let the compiler know about both the
- *      functions names and variables that will be needed. A C language 'linker'
- *      program will take care of sorting out the names and locations of the
- *      functions and variables following compilation.
+ *      The compiler should have reported an error since it did not understand
+ *      what the function call was referring to, because it had not seen the 
+ *      function before the function call. We can eliminate this error by adding
+ *      a function prototype above the main code. The function prototype is like
+ *      the function declaration (the first line of the function), and lets the
+ *      compiler know both the function's name and the type of variables that
+ *      the function will use. A C language 'linker' program will take care of
+ *      sorting out the names and memory locations of all of the functions and
+ *      variables in a program following the compilation step.
  * 
  *      Let's try this out. Leave the functions in their new location, below
- *      the main()  function, and add these function prototypes above main(),
- *      where the functions originally were located:
+ *      the main() function, and add the two function prototypes shown below
+ *      above main(), in the location where the functions were originally
+ *      located:
 
 unsigned char button_pressed(void);
 void pwm_LED5(unsigned char);
 
  *      What is the difference between the function prototype for pwm_LED5()
- *      and its actual function declaration, below?
+ *      and the actual pwm_LED5 () function declaration statement later in the
+ *      code?
  * 
- * 6.   Building the program now, with the included function prototypes, should
+ * 6.   Building the program with the included function prototypes should now
  *      work without generating errors, just as it did in the original program.
  * 
  *      In C, functions may be located above the code that calls them, below
@@ -165,9 +169,9 @@ void pwm_LED5(unsigned char);
  *      variables are available to all functions. How does the 'button' variable
  *      get assigned a value? In which function does this occur?
  * 
- * 8.   Which variable does the value of tOnLED5 get transferred to in the 
+ * 8.   Which variable does the value of TonLED5 get transferred to in the 
  *      pwm_LED5() function? Is this variable global, or local to the LED
- *      function? Could the pwm_LED5 function use the tOnLED5 variable directly?
+ *      function? Could the pwm_LED5 function use the TonLED5 variable directly?
   * 
  * Programming Activities
  * 
@@ -178,21 +182,24 @@ void pwm_LED5(unsigned char);
  * 
  *      Modify the button_pressed() and main() functions to use SW3 as an
  *      instant on button, and SW2 as an instant off button. Pressing either of
- *      these buttons will over-write the current tOnLED5 value with either 255
+ *      these buttons will over-write the current TonLED5 value with either 255
  *      or 0, and still allow SW4 and SW5 to adjust the brightness when pressed.
  *
- * 2.   Create a function to return the numbers 1-5 corresponding to which of
- *      the SW1 to SW5 switches are pressed, and return 0 if no switches are
- *      pressed. Then, create a function to accept a number from 1 to 5 and 
- *      light the corresponding LED beside each button.
+ * 2.   Create a function that will return a number from 1-4 corresponding to
+ *      which of the SW2 to SW5 switches is pressed, or return 0 if no switches
+ *      are pressed. Then, create a function that will accept a number from 1 to
+ *      4 that lights the corresponding LED beside each button.
  * 
- * 3.   Create a sound function that takes a parameter representing the tone's
- *      period or frequency. Modify your button function, above to return a
- *      variable that can be passed to the sound function to make each tone.
+ * 3.   Create a sound function that takes a parameter representing a tone's
+ *      period. Modify your button function, above, to return a variable that
+ *      will be passed to the sound function to make four different tones.
  * 
- * 4.   Create a function that converts an 8-bit binary number into three
- *      decimal character variables corresponding to the hundreds, tens and 
- *      ones digits represented by the binary number passed to it. For example,
- *      passing the function a value of 142 will result in the hundreds variable
- *      containing the value 1, the tens variable 4, and the ones variable 2.
+ * 4.   A function that converts an 8-bit binary value into its decimal
+ *      equivalent would be useful for helping us to debug our programs. Create
+ *      a function that converts an 8-bit binary number into three decimal
+ *      character variables representing the hundreds, tens and ones digits
+ *      of the binary number passed to it. For example, passing the function
+ *      a value of 142 will result in the hundreds variable containing the
+ *      value 1, the tens variable containing 4, and the ones variable 2. How
+ *      could you test this function to verify that it works?
  */
