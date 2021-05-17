@@ -1,6 +1,6 @@
 /*==============================================================================
  Project: Intro-4-Functions
- Date:    April 30, 2021
+ Date:    May 16, 2021
  
  This program demonstrates the use of functions, and variable passing between
  the main and function code.
@@ -16,8 +16,8 @@
 
 #include    "UBMP4.h"           // Include UBMP4 constants and functions
 
-// TODO Set linker ROM ranges to 'default,-0-FFF' under "Memory model" pull-down.
-// TODO Set linker code offset to '1000' under "Additional options" pull-down.
+// TODO Set linker ROM ranges to 'default,-0-7FF' under "Memory model" pull-down.
+// TODO Set linker code offset to '800' under "Additional options" pull-down.
 
 // Button constant definitions
 const char noButton = 0;
@@ -112,8 +112,8 @@ int main(void)
  *      button_pressed() and pwm_LED5(), are located above the main() function
  *      so that their memory locations and variable requirements will be
  *      determined before the rest of the program compiles. When the compiler
- *      gets down to the function call statements in the main code, it already
- *      knows where those functions are be in memory, and which memory locations
+ *      interprets the function call statements in the main code, it already
+ *      knows where those functions are be in memory and which memory locations
  *      are used by their variables.
  * 
  *      Try moving the button_pressed() and pwm_LED5() functions to below the
@@ -130,7 +130,7 @@ int main(void)
  *      variables in a program following the compilation step.
  * 
  *      Let's try this out. Leave the functions in their new location, below
- *      the main() function, and add the two function prototypes shown below
+ *      the main() function, and add the two function prototypes (shown below)
  *      above main(), in the location where the functions were originally
  *      located:
 
@@ -141,8 +141,8 @@ void pwm_LED5(unsigned char);
  *      and the actual pwm_LED5 () function declaration statement later in the
  *      code?
  * 
- * 6.   Building the program with the included function prototypes should now
- *      work without generating errors, just as it did in the original program.
+ * 6.   Building the program with the added function prototypes should now work
+ *      without generating errors, just as it did in the original program.
  * 
  *      In C, functions may be located above the code that calls them, below
  *      their function calls if a function prototype is supplied, or even in 
