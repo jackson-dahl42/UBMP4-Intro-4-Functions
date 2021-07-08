@@ -25,7 +25,7 @@ const char UP = 1;
 const char DOWN = 2;
 
 // Program variable definitions
-unsigned char TonLED5 = 127;
+unsigned char LED5Brightness = 125;
 unsigned char button;
 
 unsigned char button_pressed(void)
@@ -44,17 +44,18 @@ unsigned char button_pressed(void)
     }
 }
 
-void pwm_LED5(unsigned char Ton)
+void pwm_LED5(unsigned char pwmValue)
 {
     for(unsigned char t = 255; t != 0; t --)
     {
-        if(Ton == t)
+        if(pwmValue == t)
         {
             LED5 = 1;
         }
         __delay_us(20);
     }
-    if(Ton < 255)
+    // End the pulse if pwmValue < 255
+    if(pwmValue < 255)
     {
         LED5 = 0;
     }
@@ -70,27 +71,29 @@ int main(void)
         // Read up/down buttons and adjust LED5 brightness
         button = button_pressed();
         
-        if(button == UP && TonLED5 < 255)
+        if(button == UP && LED5Brightness < 255)
         {
-            TonLED5 += 1;
+            LED5Brightness += 1;
         }
 
-        if(button == DOWN && TonLED5 > 0)
+        if(button == DOWN && LED5Brightness > 0)
         {
-            TonLED5 -= 1;
+            LED5Brightness -= 1;
         }
 
-        pwm_LED5(TonLED5);
+        // PWM LED5 with current brightness
+        pwm_LED5(LED5Brightness);
         
-        // Activate bootloader when SW1 is pressed.
+        // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
         {
-            asm("reset");
+            RESET();
         }
     }
 }
 
 // Move the function code to here in Program Analysis, step 5.
+
 
 /* Program Analysis
  * 
@@ -105,10 +108,10 @@ int main(void)
  * 
  * 4.   What is the purpose of the 'unsigned char' variable type declaration in
  *      the pwm_LED5() function? Where does the value of the variable come from?
- *      Where is this value stored in the function?
+ *      Where does this value get stored in the function?
  * 
  * 5.   C language compilers typically read through the entire program in a
- *      single pass, converting the C code into machine code. The two functions,
+ *      single pass, converting C code into machine code. The two functions,
  *      button_pressed() and pwm_LED5(), are located above the main() function
  *      so that their memory locations and variable requirements will be
  *      determined before the rest of the program compiles. When the compiler
@@ -120,7 +123,7 @@ int main(void)
  *      closing brace of the main() function, and build the code. What happens?
  * 
  *      The compiler should have reported an error since it did not understand
- *      what the function call was referring to, because it had not seen the 
+ *      what the function call was referring to since it had not seen the named
  *      function before the function call. We can eliminate this error by adding
  *      a function prototype above the main code. The function prototype is like
  *      the function declaration (the first line of the function), and lets the
@@ -135,10 +138,11 @@ int main(void)
  *      located:
 
 unsigned char button_pressed(void);
+
 void pwm_LED5(unsigned char);
 
  *      What is the difference between the function prototype for pwm_LED5()
- *      and the actual pwm_LED5 () function declaration statement later in the
+ *      and the actual pwm_LED5() function declaration statement later in the
  *      code?
  * 
  * 6.   Building the program with the added function prototypes should now work
@@ -159,7 +163,7 @@ void pwm_LED5(unsigned char);
  *      the 'UBMP4.c' file, along with various symbolic constants used by both
  *      our program and the code in the UBMP4.c functions.
  * 
- *      Open the UBMP4.c file to find the setup_oscillator() and setup_ports()
+ *      Open the UBMP4.c file to find the OSC_config() and UBMP4_config()
  *      functions called from the main() function in this program. Are any
  *      values passed between this code and the two setup functions? How do
  *      you know?
@@ -169,10 +173,11 @@ void pwm_LED5(unsigned char);
  *      variables are available to all functions. How does the 'button' variable
  *      get assigned a value? In which function does this occur?
  * 
- * 8.   Which variable does the value of TonLED5 get transferred to in the 
- *      pwm_LED5() function? Is this variable global, or local to the LED
- *      function? Could the pwm_LED5 function use the TonLED5 variable directly?
-  * 
+ * 8.   Which variable does the value of LED5Brightness get transferred to in
+ *      the pwm_LED5() function? Is this variable global, or local to the LED
+ *      function? Could the pwm_LED5 function use the LED5Brightness variable
+ *      directly, instead of transferring its value to another variable?
+ * 
  * Programming Activities
  * 
  * 1.   It might be useful to have a button that instantly turns LED D5 fully
@@ -182,15 +187,16 @@ void pwm_LED5(unsigned char);
  * 
  *      Modify the button_pressed() and main() functions to use SW3 as an
  *      instant on button, and SW2 as an instant off button. Pressing either of
- *      these buttons will over-write the current TonLED5 value with either 255
- *      or 0, and still allow SW4 and SW5 to adjust the brightness when pressed.
+ *      these buttons will over-write the current LED5Brightness value with
+ *      either 255 or 0, while still allowing SW4 and SW5 to adjust the
+ *      brightness in smaller increments when pressed.
  *
  * 2.   Create a function that will return a number from 1-4 corresponding to
  *      which of the SW2 to SW5 switches is pressed, or return 0 if no switches
  *      are pressed. Then, create a function that will accept a number from 1 to
  *      4 that lights the corresponding LED beside each button.
  * 
- * 3.   Create a sound function that takes a parameter representing a tone's
+ * 3.   Create a sound function that receives a parameter representing a tone's
  *      period. Modify your button function, above, to return a variable that
  *      will be passed to the sound function to make four different tones.
  * 
@@ -201,5 +207,5 @@ void pwm_LED5(unsigned char);
  *      of the binary number passed to it. For example, passing the function
  *      a value of 142 will result in the hundreds variable containing the
  *      value 1, the tens variable containing 4, and the ones variable 2. How
- *      could you test this function to verify that it works?
+ *      could you test this function to verify that it works? Try it!
  */
