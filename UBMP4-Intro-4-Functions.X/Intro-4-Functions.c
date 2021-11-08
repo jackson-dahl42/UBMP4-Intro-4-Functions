@@ -123,7 +123,7 @@ int main(void)
  *      closing brace of the main() function, and build the code. What happens?
  * 
  *      The compiler should have reported an error since it did not understand
- *      what the function call was referring to since it had not seen the named
+ *      what the function call was referring to because it had not seen the
  *      function before the function call. We can eliminate this error by adding
  *      a function prototype above the main code. The function prototype is like
  *      the function declaration (the first line of the function), and lets the
