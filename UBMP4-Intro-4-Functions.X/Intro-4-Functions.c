@@ -19,6 +19,9 @@
 // TODO Set linker ROM ranges to 'default,-0-7FF' under "Memory model" pull-down.
 // TODO Set linker code offset to '800' under "Additional options" pull-down.
 
+#define A1
+
+#ifdef originalProgramAnalysis
 // Button constant definitions
 const char noButton = 0;
 const char UP = 1;
@@ -91,24 +94,200 @@ int main(void)
         }
     }
 }
+#endif
+#ifdef programAnalysis
+// Button constant definitions
+const char noButton = 0;
+const char UP = 1;
+const char DOWN = 2;
 
+// Program variable definitions
+unsigned char LED5Brightness = 125;
+unsigned char button;
+
+unsigned char button_pressed(void);
+
+void pwm_LED5(unsigned char);
+
+int main(void)
+{
+unsigned char button_pressed(void)
+{
+    if(SW4 == 0)
+    {
+        return(UP);
+    }
+    else if(SW5 == 0)
+    {
+        return(DOWN);
+    }
+    else
+    {
+        return(noButton);
+    }
+}
+
+void pwm_LED5(unsigned char pwmValue)
+{
+    for(unsigned char t = 255; t != 0; t --)
+    {
+        if(pwmValue == t)
+        {
+            LED5 = 1;
+        }
+        __delay_us(20);
+    }
+    // End the pulse if pwmValue < 255
+    if(pwmValue < 255)
+    {
+        LED5 = 0;
+    }
+}
+    OSC_config();               // Configure internal oscillator for 48 MHz
+    UBMP4_config();             // Configure on-board UBMP4 I/O devices
+	
+    while(1)
+	{
+        // Read up/down buttons and adjust LED5 brightness
+        button = button_pressed();
+        
+        if(button == UP && LED5Brightness < 255)
+        {
+            LED5Brightness += 1;
+        }
+
+        if(button == DOWN && LED5Brightness > 0)
+        {
+            LED5Brightness -= 1;
+        }
+
+        // PWM LED5 with current brightness
+        if()
+        {
+            pwm_LED5(LED5Brightness);
+        }
+        // Activate bootloader if SW1 is pressed.
+        if(SW1 == 0)
+        {
+            RESET();
+        }
+    }
+}
+#endif
+#ifdef A1
+// Button constant definitions
+const char noButton = 0;
+const char UP = 1;
+const char DOWN = 2;
+
+// Program variable definitions
+unsigned char LED5Brightness = 125;
+unsigned char button;
+
+unsigned char button_pressed(void)
+{
+    if(SW4 == 0)
+    {
+        return(UP);
+    }
+    else if(SW5 == 0)
+    {
+        return(DOWN);
+    }
+    else
+    {
+        return(noButton);
+    }
+}
+
+void pwm_LED5(unsigned char pwmValue)
+{
+    for(unsigned char t = 255; t != 0; t --)
+    {
+        if(pwmValue == t)
+        {
+            LED5 = 1;
+        }
+        __delay_us(20);
+    }
+    // End the pulse if pwmValue < 255
+    if(pwmValue < 255)
+    {
+        LED5 = 0;
+    }
+}
+
+int main(void)
+{
+    OSC_config();               // Configure internal oscillator for 48 MHz
+    UBMP4_config();             // Configure on-board UBMP4 I/O devices
+	
+    while(1)
+	{
+        // Read up/down buttons and adjust LED5 brightness
+        button = button_pressed();
+        
+        if(button == UP && LED5Brightness < 255)
+        {
+            LED5Brightness += 1;
+        }
+
+        if(button == DOWN && LED5Brightness > 0)
+        {
+            LED5Brightness -= 1;
+        }
+
+        // PWM LED5 with current brightness
+        pwm_LED5(LED5Brightness);
+        
+        // Activate bootloader if SW1 is pressed.
+        if(SW1 == 0)
+        {
+            RESET();
+        }
+    }
+}
+#endif
+#ifdef A2
+#endif
+#ifdef A3
+#endif
+#ifdef A4
+#endif
 // Move the function code to here in Program Analysis, step 5.
 
 
 /* Program Analysis
  * 
  * 1.   Which function in this program will run first? How do you know?
+
+ The first function that runs first is the button_pressed(). I know that this is
+ the fist function that will run because it is at the top of the while loop.
  * 
  * 2.   What is the purpose of the 'unsigned char' variable type declaration in
  *      the button_pressed() function? Is it used by this function to receive
  *      a variable from, or return a variable to the main code?
+
+ The purpose of the unsigned char variable type delcaration is to define the function which could
+ return multiple values. Inside the function button_pressed() is a series of if statements that
+ might return a value. The value of the "button_pressed" is defined by the if statements.
+ It is used to return a variable to the main code.
  * 
  * 3.   How does the function call statement 'button = button_pressed();' in the
  *      main code support your answer in 2, above?
+
+ This statement just redifines the function. Now when ever the word "button" that value that was determined
+ in the "button_pressed()" function will be used for button in the while loop.
  * 
  * 4.   What is the purpose of the 'unsigned char' variable type declaration in
  *      the pwm_LED5() function? Where does the value of the variable come from?
  *      Where does this value get stored in the function?
+
+ The purpose of the unsigned char in the brackets of the pwm_LED5() function is that it acts as
+ a parameter. The value of the PWMValue which is the parameter in the brackets is determined when
+ the function is called. The value of the variable comes form the while loop or main code. For
+ example if I were to call the function in the program pwm_LED5(5) then the value of the unsigned
+ char variable would be 5.
  * 
  * 5.   C language compilers typically read through the entire program in a
  *      single pass, converting C code into machine code. The two functions,
