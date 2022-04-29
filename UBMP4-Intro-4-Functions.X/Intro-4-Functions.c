@@ -19,7 +19,7 @@
 // TODO Set linker ROM ranges to 'default,-0-7FF' under "Memory model" pull-down.
 // TODO Set linker code offset to '800' under "Additional options" pull-down.
 
-#define A1
+#define A4
 
 #ifdef originalProgramAnalysis
 // Button constant definitions
@@ -249,10 +249,173 @@ int main(void)
 }
 #endif
 #ifdef A2
+// Program that uses two functions to give functionality to all 4 buttons.
+// One function returns a number 0-4 corresponding to the switch, and the other
+// activates a light if given a number 0-4
+
+// Program variable definitions
+
+unsigned char button;
+
+unsigned char button_pressed(void)
+{
+    if(SW2 == 0)
+    {
+        return(1);
+    }
+    else if(SW3 == 0)
+    {
+        return(2);
+    }
+    else if(SW4 == 0)
+    {
+        return(3);
+    }
+    else if(SW5 == 0)
+    {
+        return(4);
+    }
+    else
+    {
+        return(0);
+    }
+}
+
+void light(unsigned char button)
+{
+    if(button == 1)
+    {
+        LED3 = 1;
+    }
+    else if(button == 2)
+    {
+        LED4 = 1;
+    }
+    else if(button == 3)
+    {
+        LED5 = 1;
+    }
+    else if(button == 4)
+    {
+        LED6 = 1;
+    }
+    else
+    {
+        LED3 = 0;
+        LED4 = 0;
+        LED5 = 0;
+        LED6 = 0;
+    }
+}
+
+int main(void)
+{
+    OSC_config();               // Configure internal oscillator for 48 MHz
+    UBMP4_config();             // Configure on-board UBMP4 I/O devices
+	
+    while(1)
+	{
+        button = button_pressed();
+
+        light(button);
+
+        if(SW1 == 0)
+        {
+            RESET();
+        }
+    }
+}
 #endif
 #ifdef A3
+unsigned char period;
+
+unsigned char button_pressed(void)
+{
+    if(SW2 == 0)
+    {
+        return(1);
+    }
+    else if(SW3 == 0)
+    {
+        return(2);
+    }
+    else if(SW4 == 0)
+    {
+        return(3);
+    }
+    else if(SW5 == 0)
+    {
+        return(4);
+    }
+    else
+    {
+        return(0);
+    }
+}
+
+void tone(unsigned char period)
+{       
+    if(period != 0)
+    {
+        for(unsigned char cycles = 50; cycles != 0; cycles--)
+        {
+            BEEPER = !BEEPER;
+            for(unsigned int p = period; p != 0; p--);
+        }
+    }
+}
+
+int main(void)
+{
+    OSC_config();               // Configure internal oscillator for 48 MHz
+    UBMP4_config();             // Configure on-board UBMP4 I/O devices
+	
+    while(1)
+	{
+        period = button_pressed();
+
+        tone(period);
+
+        if(SW1 == 0)
+        {
+            RESET();
+        }
+    }
+}
 #endif
 #ifdef A4
+unsigned int number;
+unsigned char binary_number = 142;
+
+    unsigned int modulo(unsigned int n)
+    {
+        while(n >= 10)
+        {
+            n -= 10;
+        }
+
+        return(n);
+    }
+
+int main(void)
+{
+    OSC_config();               // Configure internal oscillator for 48 MHz
+    UBMP4_config();             // Configure on-board UBMP4 I/O devices
+
+    while(1)
+	{
+        number = modulo(100);
+        if(number == 0)
+        {
+            LED3 = 1;
+        }
+
+        if(SW1 == 0)
+        {
+            RESET();
+        }
+    }
+}
 #endif
 // Move the function code to here in Program Analysis, step 5.
 
