@@ -19,7 +19,7 @@
 // TODO Set linker ROM ranges to 'default,-0-7FF' under "Memory model" pull-down.
 // TODO Set linker code offset to '800' under "Additional options" pull-down.
 
-#define A1
+#define A4
 
 #ifdef originalProgramAnalysis
 // Button constant definitions
@@ -419,21 +419,11 @@ ones = ' ';
 tens = ' ';
 hundreds = ' ';
 
-    unsigned char modulo(unsigned char n)
-    {
-        while(n >= 10)
-        {
-            n -= 10;
-        }
-
-        return(n);
-    }
-
     void function(unsigned char number)
     {
-        ones = modulo(number) + '0';
-        tens = modulo(number / 10) + '0';
-        hundreds = modulo(number / 100) + '0';
+        ones = number % 10 + '0';
+        tens =  (number / 10) % 10 + '0';
+        hundreds = (number / 100) % 10 + '0';
     }
 
 int main(void)
